@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metodo PEPS", "Metodo PEPS\Metodo PEPS.csproj", "{84B3958C-EF97-4078-955E-0C310E5F294C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84B3958C-EF97-4078-955E-0C310E5F294C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84B3958C-EF97-4078-955E-0C310E5F294C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84B3958C-EF97-4078-955E-0C310E5F294C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84B3958C-EF97-4078-955E-0C310E5F294C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2669EFCF-185C-46A2-956C-9465C4AA628F}
+	EndGlobalSection
+EndGlobal
