@@ -1,141 +1,143 @@
+using System.Windows.Forms;
+
 namespace Metodo_PEPS
 {
     public partial class Form1 : Form
     {
-        private InventarioPEPS inventario = new InventarioPEPS();
+        private InventarioBase inventario;
+
         public Form1()
         {
-            InitializeComponent(); 
-            ConfigurarDataGridView();
+            InitializeComponent();
+            InicializarDataGridView();
+
         }
-       
-        private void ConfigurarDataGridView()
+
+        // Asumiendo que tienes un ComboBox llamado cbMetodo
+        private void cbMetodo_SelectedIndexChanged(object sender, EventArgs e)
         {
+            switch (cbMetodo.SelectedItem.ToString())
+            {
+                case "PEPS":
+                    inventario = new InventarioPEPS();
+                    break;
+                case "UEPS":
+                    inventario = new InventarioUEPS();
+                    break;
+            }
+            ActualizarDataGridView();
+        }
+
+        private void InicializarDataGridView()
+        {
+            // Configurar las columnas del DataGridView
             dgvSaldos.Columns.Add("Fecha", "Fecha");
-            dgvSaldos.Columns.Add("Concepto", "Concepto");
-            dgvSaldos.Columns.Add("CantidadEntrada", "Cantidad (Entrada)");
-            dgvSaldos.Columns.Add("ValorUnitarioEntrada", "Valor unitario (Entrada)");
-            dgvSaldos.Columns.Add("ValorTotalEntrada", "Valor total (Entrada)");
-            dgvSaldos.Columns.Add("CantidadSalida", "Cantidad (Salida)");
-            dgvSaldos.Columns.Add("ValorUnitarioSalida", "Valor unitario (Salida)");
-            dgvSaldos.Columns.Add("ValorTotalSalida", "Valor total (Salida)");
-            dgvSaldos.Columns.Add("CantidadSaldo", "Existencia");
-            dgvSaldos.Columns.Add("ValorTotalSaldo", "Valor total (Saldo)");
+            dgvSaldos.Columns.Add("CantidadEntrada", "Cantidad Entrada");
+            dgvSaldos.Columns.Add("CantidadSalida", "Cantidad Salida");
+            dgvSaldos.Columns.Add("Existencia", "Existencia");
+            dgvSaldos.Columns.Add("CostoUnitario", "Costo Unitario");
+            dgvSaldos.Columns.Add("Debe", "Debe");
+            dgvSaldos.Columns.Add("Haber", "Haber");
+            dgvSaldos.Columns.Add("Saldo", "Saldo");
+
+            // Aplicar el formato de moneda a las columnas adecuadas
+            dgvSaldos.Columns["CostoUnitario"].DefaultCellStyle.Format = "C";
+            dgvSaldos.Columns["Debe"].DefaultCellStyle.Format = "C";
+            dgvSaldos.Columns["Haber"].DefaultCellStyle.Format = "C";
+            dgvSaldos.Columns["Saldo"].DefaultCellStyle.Format = "C";
         }
 
-        private void MostrarSaldos()
+        // Método para actualizar el DataGridView con el historial de inventario
+        private void ActualizarDataGridView()
         {
-            try
-            {
-                dgvSaldos.Rows.Clear();
-                var historial = inventario.ObtenerHistorial();
+            dgvSaldos.Rows.Clear(); // Limpiar las filas previas
 
-                foreach (var registro in historial)
-                {
-                    dgvSaldos.Rows.Add(
-                        registro.Fecha.ToString("dd-MMM"),
-                        registro.Concepto,
-                        registro.CantidadEntrada.HasValue ? registro.CantidadEntrada.Value.ToString() : "",
-                        registro.ValorUnitarioEntrada.HasValue ? registro.ValorUnitarioEntrada.Value.ToString("C") : "",
-                        registro.ValorTotalEntrada.HasValue ? registro.ValorTotalEntrada.Value.ToString("C") : "",
-                        registro.CantidadSalida.HasValue ? registro.CantidadSalida.Value.ToString() : "",
-                        registro.ValorUnitarioSalida.HasValue ? registro.ValorUnitarioSalida.Value.ToString("C") : "",
-                        registro.ValorTotalSalida.HasValue ? registro.ValorTotalSalida.Value.ToString("C") : "",
-                        registro.CantidadSaldo.ToString(),
-                        registro.ValorTotalSaldo.ToString("C")
-                    );
-                }
-            }
-            catch (Exception ex)
+            // Obtener el historial del inventario y añadir cada registro al DataGridView
+            foreach (var registro in inventario.ObtenerHistorial())
             {
-                MessageBox.Show($"Error al mostrar los saldos: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                dgvSaldos.Rows.Add(
+                    registro.Fecha.ToShortDateString(),   // Fecha
+                    registro.CantidadEntrada,             // Cantidad Entrada
+                    registro.CantidadSalida,              // Cantidad Salida
+                    registro.CantidadSaldo,               // Existencia
+                    registro.ValorUnitarioEntrada ?? registro.ValorUnitarioSalida, // Costo Unitario (formateado como moneda)
+                    registro.ValorTotalEntrada,           // Debe (formateado como moneda)
+                    registro.ValorTotalSalida,            // Haber (formateado como moneda)
+                    registro.ValorTotalSaldo              // Saldo (formateado como moneda)
+                );
             }
         }
 
-        private void btnRegistrarCompra_Click_1(object sender, EventArgs e)
+        private void btnRegistrarCompra_Click(object sender, EventArgs e)
         {
+            DateTime fecha = dtpFechaCompra.Value;
+            int cantidad;
+            decimal precioUnitario;
+
+            // Validar que la cantidad sea un número entero positivo
+            if (!int.TryParse(txtCantidadCompra.Text, out cantidad) || cantidad <= 0)
+            {
+                MessageBox.Show("Por favor, ingresa una cantidad válida (entero positivo).", "Error de entrada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Validar que el precio unitario sea un número decimal positivo
+            if (!decimal.TryParse(txtPrecioUnitario.Text, out precioUnitario) || precioUnitario <= 0)
+            {
+                MessageBox.Show("Por favor, ingresa un precio unitario válido (número decimal positivo).", "Error de entrada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (inventario == null)
+            {
+                MessageBox.Show("Por favor, selecciona un método de inventario.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            inventario.RegistrarCompra(fecha, cantidad, precioUnitario);
+            ActualizarDataGridView();
+        }
+
+
+        private void btnRegistrarVenta_Click(object sender, EventArgs e)
+        {
+            DateTime fecha = dtpFechaVenta.Value;
+            int cantidad;
+
+            // Validar que la cantidad sea un número entero positivo
+            if (!int.TryParse(txtCantidadVenta.Text, out cantidad) || cantidad <= 0)
+            {
+                MessageBox.Show("Por favor, ingresa una cantidad válida (entero positivo).", "Error de entrada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Intentar registrar la venta
             try
             {
-                if (ValidarDatosCompra())
-                {
-                    DateTime fecha = dtpFechaCompra.Value;
-                    int cantidad = int.Parse(txtCantidadCompra.Text);
-                    decimal precioUnitario = decimal.Parse(txtPrecioUnitario.Text);
-
-                    inventario.RegistrarCompra(fecha, cantidad, precioUnitario);
-                    MostrarSaldos();
-                }
+                inventario.RegistrarVenta(fecha, cantidad);
+                ActualizarDataGridView(); // Actualizar el DataGridView después de la venta
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                MessageBox.Show($"Error al registrar la compra: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void btnRegistrarVenta_Click_1(object sender, EventArgs e)
+        private void cbMetodo_SelectedIndexChanged_1(object sender, EventArgs e)
         {
-            try
+            switch (cbMetodo.SelectedItem.ToString())
             {
-                if (ValidarDatosVenta())
-                {
-                    DateTime fecha = dtpFechaVenta.Value;
-                    int cantidad = int.Parse(txtCantidadVenta.Text);
-
-                    inventario.RegistrarVenta(fecha, cantidad);
-                    MostrarSaldos();
-                }
+                case "PEPS":
+                    inventario = new InventarioPEPS();
+                    break;
+                case "UEPS":
+                    inventario = new InventarioUEPS();
+                    break;
+                case "Promedio":
+                    inventario = new InventarioPromedio(); // Usar la nueva clase
+                    break;
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al registrar la venta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private bool ValidarDatosCompra()
-        {
-            try
-            {
-                // Validar que la cantidad sea un número entero positivo
-                if (!int.TryParse(txtCantidadCompra.Text, out int cantidad) || cantidad <= 0)
-                {
-                    MessageBox.Show("Por favor, ingrese una cantidad válida para la compra (número entero positivo).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
-                }
-
-                // Validar que el precio unitario sea un número decimal positivo
-                if (!decimal.TryParse(txtPrecioUnitario.Text, out decimal precioUnitario) || precioUnitario <= 0)
-                {
-                    MessageBox.Show("Por favor, ingrese un precio unitario válido (número decimal positivo).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error en la validación de datos de compra: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
-        private bool ValidarDatosVenta()
-        {
-            try
-            {
-                // Validar que la cantidad sea un número entero positivo
-                if (!int.TryParse(txtCantidadVenta.Text, out int cantidad) || cantidad <= 0)
-                {
-                    MessageBox.Show("Por favor, ingrese una cantidad válida para la venta (número entero positivo).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error en la validación de datos de venta: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
+            ActualizarDataGridView();
         }
     }
 }

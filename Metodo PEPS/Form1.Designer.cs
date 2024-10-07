@@ -43,6 +43,8 @@
             label5 = new Label();
             label6 = new Label();
             dgvSaldos = new DataGridView();
+            cbMetodo = new ComboBox();
+            label7 = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvSaldos).BeginInit();
             SuspendLayout();
             // 
@@ -51,19 +53,19 @@
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Tahoma", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.CornflowerBlue;
+            label1.ForeColor = Color.Crimson;
             label1.Location = new Point(186, 23);
             label1.Name = "label1";
-            label1.Size = new Size(654, 29);
+            label1.Size = new Size(656, 29);
             label1.TabIndex = 0;
-            label1.Text = "VALUACION DE INVENTARIOS POR EL METODO PEPS";
+            label1.Text = "VALUACION DE INVENTARIOS POR EL METODO UEPS";
             // 
             // btnRegistrarCompra
             // 
             btnRegistrarCompra.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             btnRegistrarCompra.BackColor = Color.White;
             btnRegistrarCompra.FlatAppearance.BorderSize = 0;
-            btnRegistrarCompra.FlatAppearance.MouseOverBackColor = Color.CornflowerBlue;
+            btnRegistrarCompra.FlatAppearance.MouseOverBackColor = Color.Crimson;
             btnRegistrarCompra.FlatStyle = FlatStyle.Flat;
             btnRegistrarCompra.Font = new Font("Yu Gothic Medium", 12F, FontStyle.Bold);
             btnRegistrarCompra.Location = new Point(509, 169);
@@ -72,14 +74,14 @@
             btnRegistrarCompra.TabIndex = 1;
             btnRegistrarCompra.Text = "Comprar";
             btnRegistrarCompra.UseVisualStyleBackColor = false;
-            btnRegistrarCompra.Click += btnRegistrarCompra_Click_1;
+            btnRegistrarCompra.Click += btnRegistrarCompra_Click;
             // 
             // btnRegistrarVenta
             // 
             btnRegistrarVenta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             btnRegistrarVenta.BackColor = Color.White;
             btnRegistrarVenta.FlatAppearance.BorderSize = 0;
-            btnRegistrarVenta.FlatAppearance.MouseOverBackColor = Color.CornflowerBlue;
+            btnRegistrarVenta.FlatAppearance.MouseOverBackColor = Color.Crimson;
             btnRegistrarVenta.FlatStyle = FlatStyle.Flat;
             btnRegistrarVenta.Font = new Font("Yu Gothic Medium", 12F, FontStyle.Bold);
             btnRegistrarVenta.Location = new Point(507, 304);
@@ -88,7 +90,7 @@
             btnRegistrarVenta.TabIndex = 2;
             btnRegistrarVenta.Text = "Vender";
             btnRegistrarVenta.UseVisualStyleBackColor = false;
-            btnRegistrarVenta.Click += btnRegistrarVenta_Click_1;
+            btnRegistrarVenta.Click += btnRegistrarVenta_Click;
             // 
             // label2
             // 
@@ -202,11 +204,33 @@
             dgvSaldos.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvSaldos.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dgvSaldos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvSaldos.Location = new Point(29, 365);
+            dgvSaldos.Location = new Point(118, 357);
             dgvSaldos.Name = "dgvSaldos";
             dgvSaldos.ReadOnly = true;
-            dgvSaldos.Size = new Size(1021, 266);
+            dgvSaldos.Size = new Size(838, 266);
             dgvSaldos.TabIndex = 13;
+            // 
+            // cbMetodo
+            // 
+            cbMetodo.FormattingEnabled = true;
+            cbMetodo.Items.AddRange(new object[] { "PEPS", "UEPS", "Promedio" });
+            cbMetodo.Location = new Point(835, 265);
+            cbMetodo.Name = "cbMetodo";
+            cbMetodo.Size = new Size(121, 23);
+            cbMetodo.TabIndex = 14;
+            cbMetodo.SelectedIndexChanged += cbMetodo_SelectedIndexChanged_1;
+            // 
+            // label7
+            // 
+            label7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label7.AutoSize = true;
+            label7.Font = new Font("Yu Gothic Medium", 12F, FontStyle.Bold);
+            label7.ForeColor = SystemColors.ButtonHighlight;
+            label7.Location = new Point(835, 241);
+            label7.Name = "label7";
+            label7.Size = new Size(93, 21);
+            label7.TabIndex = 15;
+            label7.Text = "METODO:";
             // 
             // Form1
             // 
@@ -215,6 +239,8 @@
             AutoSize = true;
             BackColor = Color.FromArgb(26, 26, 26);
             ClientSize = new Size(1083, 657);
+            Controls.Add(label7);
+            Controls.Add(cbMetodo);
             Controls.Add(dgvSaldos);
             Controls.Add(dtpFechaVenta);
             Controls.Add(txtCantidadVenta);
@@ -255,5 +281,7 @@
         private Label label5;
         private Label label6;
         private DataGridView dgvSaldos;
+        private ComboBox cbMetodo;
+        private Label label7;
     }
 }
